@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:fl_chart/fl_chart.dart';
 
 const API_KEY = 'bfc6a9ad72f81587054473aa06776ab6';
 const CITY = 'Bandung';
@@ -70,6 +71,7 @@ class _DataPageState extends State<DataPage> {
   @override
   void initState() {
     super.initState();
+    // Fetch weather data only once during initialization
     futureWeatherData = fetchWeatherData();
   }
 
@@ -83,27 +85,35 @@ class _DataPageState extends State<DataPage> {
         child: FutureBuilder<WeatherData>(
           future: futureWeatherData,
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildInfoCard('Location', snapshot.data!.location),
-                    _buildInfoCard(
-                        'Temperature', '${snapshot.data!.temperature}°C'),
-                    _buildInfoCard('Humidity', '${snapshot.data!.humidity}%'),
-                    _buildInfoCard('Weather Description',
-                        snapshot.data!.weatherDescription),
-                  ],
-                ),
-              );
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
             } else if (snapshot.hasError) {
-              return Text('${snapshot.error}');
+              print('Error: ${snapshot.error}');
+              return Text(
+                  'Failed to load data. Check your internet connection.');
+            } else if (!snapshot.hasData) {
+              return Text('No data available');
             }
 
-            return const CircularProgressIndicator();
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildInfoCard('Location', snapshot.data!.location),
+                  _buildInfoCard(
+                      'Temperature', '${snapshot.data!.temperature}°C'),
+                  _buildInfoCard('Humidity', '${snapshot.data!.humidity}%'),
+                  _buildInfoCard(
+                      'Weather Description', snapshot.data!.weatherDescription),
+                  const SizedBox(height: 20),
+                  _buildChart('Temperature Chart', snapshot.data!.temperature),
+                  const SizedBox(height: 20),
+                  _buildChart('Humidity Chart', snapshot.data!.humidity),
+                ],
+              ),
+            );
           },
         ),
       ),
@@ -141,6 +151,61 @@ class _DataPageState extends State<DataPage> {
             value,
             style: TextStyle(
               fontSize: 16,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChart(String title, double value) {
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 200,
+            child: LineChart(
+              LineChartData(
+                titlesData: FlTitlesData(show: false),
+                borderData: FlBorderData(show: true),
+                gridData: FlGridData(show: true),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: [
+                      FlSpot(0, value),
+                      FlSpot(1, value + 5),
+                      FlSpot(2, value - 3),
+                      FlSpot(3, value + 2),
+                    ],
+                    isCurved: true,
+                    colors: [Colors.deepPurple],
+                    dotData: FlDotData(show: false),
+                    belowBarData: BarAreaData(show: false),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
