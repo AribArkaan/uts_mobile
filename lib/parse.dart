@@ -81,40 +81,43 @@ class _DataPageState extends State<DataPage> {
       appBar: AppBar(
         title: const Text('Weather Data Page'),
       ),
-      body: Center(
-        child: FutureBuilder<WeatherData>(
-          future: futureWeatherData,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            } else if (snapshot.hasError) {
-              print('Error: ${snapshot.error}');
-              return Text(
-                  'Failed to load data. Check your internet connection.');
-            } else if (!snapshot.hasData) {
-              return Text('No data available');
-            }
+      body: SingleChildScrollView(
+        child: Center(
+          child: FutureBuilder<WeatherData>(
+            future: futureWeatherData,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                print('Error: ${snapshot.error}');
+                return Text(
+                    'Failed to load data. Check your internet connection.');
+              } else if (!snapshot.hasData) {
+                return Text('No data available');
+              }
 
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildInfoCard('Location', snapshot.data!.location),
-                  _buildInfoCard(
-                      'Temperature', '${snapshot.data!.temperature}°C'),
-                  _buildInfoCard('Humidity', '${snapshot.data!.humidity}%'),
-                  _buildInfoCard(
-                      'Weather Description', snapshot.data!.weatherDescription),
-                  const SizedBox(height: 20),
-                  _buildChart('Temperature Chart', snapshot.data!.temperature),
-                  const SizedBox(height: 20),
-                  _buildChart('Humidity Chart', snapshot.data!.humidity),
-                ],
-              ),
-            );
-          },
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildInfoCard('Location', snapshot.data!.location),
+                    _buildInfoCard(
+                        'Temperature', '${snapshot.data!.temperature}°C'),
+                    _buildInfoCard('Humidity', '${snapshot.data!.humidity}%'),
+                    _buildInfoCard('Weather Description',
+                        snapshot.data!.weatherDescription),
+                    const SizedBox(height: 20),
+                    _buildChart(
+                        'Temperature Chart', snapshot.data!.temperature),
+                    const SizedBox(height: 20),
+                    _buildChart('Humidity Chart', snapshot.data!.humidity),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
