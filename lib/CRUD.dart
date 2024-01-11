@@ -28,8 +28,8 @@ class CRUD extends StatefulWidget {
 
 class _CRUDState extends State<CRUD> {
   List<User> users = [
-    User(id: 1, name: 'John Doe', email: 'john@example.com'),
-    User(id: 2, name: 'Jane Doe', email: 'jane@example.com'),
+    User(id: 1, name: 'Arib Arkaan', email: 'arib.ar@gmial.com'),
+    User(id: 2, name: 'Dhevan syah', email: 'dhevan.dh@gmail.com'),
   ];
 
   TextEditingController nameController = TextEditingController();
