@@ -3,6 +3,7 @@ import 'login.dart';
 import 'bmi.dart'; // Import your BMI page
 import 'calculator.dart';
 import 'parse.dart';
+import 'CRUD.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -71,6 +72,18 @@ class HomePage extends StatelessWidget {
                 );
               },
             ),
+
+            Spacer(), // Add some space to push the logout button to the bottom
+            ListTile(
+              title: Text('list data'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CRUD()),
+                );
+              },
+            ),
+
             Spacer(), // Add some space to push the logout button to the bottom
             ListTile(
               title: Text('Logout'),
